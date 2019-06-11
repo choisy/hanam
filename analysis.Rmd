@@ -52,6 +52,8 @@ knitr::opts_chunk$set(margin = TRUE, prompt = TRUE, comment = "",
 options(width = 137)
 ```
 
+## Loading the coordinates data
+
 We need the `sf` package:
 
 ```{r}
@@ -109,3 +111,69 @@ which gives:
 head(houses)
 ```
 
+## Plotting the houses
+
+We need the `OpenStreetMap` package:
+
+```{r}
+if (! "sf" %in% rownames(installed.packages())) install.packages("OpenStreetMap")
+library(OpenStreetMap)
+```
+
+Below is the code you'd need to download the tiles from 3 different types of maps:
+
+```{r eval = FALSE}
+upperleft  <- c(20.525681, 105.905383)
+lowerright <- c(20.463343, 105.969019)
+bing <- openmap(upperleft, lowerright, type = "bing", minNumTiles = 20)
+osm  <- openmap(upperleft, lowerright, type = "osm",  minNumTiles = 20)
+esri <- openmap(upperleft, lowerright, type = "esri", minNumTiles = 20)
+```
+
+```{r eval = FALSE, include = FALSE}
+saveRDS(bing, "bing.rds")
+saveRDS(osm,  "osm.rds")
+saveRDS(esri, "esri.rds")
+```
+
+But the downloading would be twice as fast if you downlaod the objects directly
+from here:
+
+```{r}
+download.file("https://www.dropbox.com/s/26y2pgouodj4rpe/bing.rds?raw=1", "bing_file.rds")
+download.file("https://www.dropbox.com/s/rd34k3ixwthzg9g/esri.rds?raw=1", "esri_file.rds")
+download.file("https://www.dropbox.com/s/827ze3xr0orbab0/osm.rds?raw=1" ,  "osm_file.rds")
+bing <- readRDS("BING.rds")
+esri <- readRDS("ESRI.rds")
+osm  <- readRDS("OSM.rds")
+for(file in paste0(c("bing", "esri", "osm"), "_file.rds")) file.remove(file)
+```
+
+The function that makes the map:
+
+```{r}
+plot_hh <- function(map, points) {
+  require(sf)
+  plot(st_geometry(st_transform(points, map$tiles[[1]]$projection)))
+  plot(map, add = TRUE)
+  plot(st_geometry(st_transform(points, map$tiles[[1]]$projection)), add = TRUE, col = "red")
+}
+```
+
+OSM map:
+
+```{r fig.height = 1.5 * 3.5, fig.width = 1.5 * 4.24725}
+plot_hh(osm, hanam)
+```
+
+ESRI map:
+
+```{r fig.height = 1.5 * 3.5, fig.width = 1.5 * 4.24725}
+plot_hh(esri, hanam)
+```
+
+BING map:
+
+```{r fig.height = 1.5 * 3.5, fig.width = 1.5 * 4.24725}
+plot_hh(bing, hanam)
+```
