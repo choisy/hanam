@@ -77,7 +77,7 @@ unzip("hanam.zip")
 Once unzipped read the shapefile:
 
 ```{r}
-hanam <- sf::st_read("Household_point.shp")[, c("Name", "X", "Y")]
+hanam <- sf::st_read("Household_point.shp")[, "Name"]
 ```
 
 And clean the disk
@@ -102,7 +102,7 @@ The coordinates of the houses can be extracted from that object and converted
 into a data frame as so:
 
 ```{r}
-houses <- as.data.frame(hanam)[, -4]
+houses <- cbind(house = hanam$Name, as.data.frame(st_coordinates(hanam)))
 ```
 
 which gives:
