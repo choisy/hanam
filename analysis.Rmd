@@ -1,5 +1,5 @@
 ---
-title: "Title"
+title: "Hanam cohort"
 csl: the-american-naturalist.csl
 output:
   html_document:
@@ -8,6 +8,8 @@ output:
   pdf_document:
     toc: yes
 <!-- bibliography: references.bib -->
+editor_options: 
+  chunk_output_type: console
 ---
 
 <!--
@@ -50,33 +52,60 @@ knitr::opts_chunk$set(margin = TRUE, prompt = TRUE, comment = "",
 options(width = 137)
 ```
 
-```{r loading_functions, include = FALSE}
-library <- function(...) base::library(..., warn.conflicts = FALSE, quiet = TRUE)
-require <- function(...) base::require(..., warn.conflicts = FALSE, quiet = TRUE)
+We need the `sf` package:
+
+```{r}
+if (! "sf" %in% rownames(installed.packages())) install.packages("sf")
+library(sf)
 ```
 
-```{r locales_UK, include = FALSE, eval = FALSE}
-l <- "en_US.UTF-8"
-Sys.setenv(LANGAGE = l)
-Sys.setlocale(locale = l)
-Sys.setlocale("LC_MESSAGES", l)
+The coordinates of the houses of the Hanam cohort are in a zipping shapefile that
+can be downloaded as so:
+
+```{r}
+download.file("https://www.dropbox.com/s/yyg6gx0nycpv60b/HH%20point%20Hanam.zip?raw=1", "hanam.zip")
 ```
 
-```{r cleaning_packages, include = FALSE, eval = FALSE}
-# cleaning the packages space:
-search_path <- search()
-pkgs <- c("stats", "graphics", "grDevices", "utils", "datasets", "methods", "base")
-tdet <- grep("package", search_path[!(search_path %in% paste0("package:", pkgs))],
-             value = TRUE)
-for(i in tdet) detach(i, unload = TRUE, character.only = TRUE)
+Once downloaded, unzip the file:
+
+```{r}
+unzip("hanam.zip")
 ```
 
-> Information about the current R session is at the bottom of the document
+Once unzipped read the shapefile:
 
+```{r}
+hanam <- sf::st_read("Household_point.shp")
+```
 
-## Session information
+And clean the disk
 
-```{r session_info}
-sessionInfo()
+```{r}
+file.remove(grep("^Household", dir(), value = TRUE))
+```
+
+and 
+
+```{r}
+file.remove("hanam.zip")
+```
+
+Here the data, which is of `sf` class
+
+```{r}
+hanam
+```
+
+The coordinates of the houses can be extracted from that object and converted
+into a data frame as so:
+
+```{r}
+houses <- as.data.frame(hanam[, c("Name", "X", "Y")])[, -4]
+```
+
+which gives:
+
+```{r}
+head(houses)
 ```
 
