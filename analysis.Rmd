@@ -194,3 +194,34 @@ done as so:
 sf::st_distance(hanam[1, ], hanam[2, ])
 ```
 
+You can get the distance matrix directly like so:
+
+```{r}
+distmat <- sf::st_distance(hanam)
+```
+
+Clustering:
+
+```{r}
+hc <- hclust(as.dist(distmat))
+```
+
+Then, you can generate clusters, depending on a distance cut-off. For example
+with a cut-off of 1000 m, your clusters would be:
+
+```{r}
+cutree(hc, h = 1000)
+```
+
+You can merge this information with the house identifier in a data frame as so:
+
+```{r}
+clusters <- data.frame(house = hanam$Name, cluster = cutree(hc, h = 1000))
+```
+
+Which gives:
+
+```{r}
+head(clusters)
+```
+
