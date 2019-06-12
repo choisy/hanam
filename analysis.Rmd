@@ -225,3 +225,11 @@ Which gives:
 head(clusters)
 ```
 
+Then you can plot these cluster on the map with color code:
+
+```{r fig.height = 1.5 * 3.5, fig.width = 1.5 * 4.24725}
+plot(st_geometry(st_transform(hanam, osm$tiles[[1]]$projection)))
+plot(osm, add = TRUE)
+plot(st_geometry(st_transform(hanam, osm$tiles[[1]]$projection)), add = TRUE, col = cutree(hc, h = 1000))
+```
+
