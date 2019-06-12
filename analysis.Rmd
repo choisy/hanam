@@ -177,3 +177,20 @@ BING map:
 ```{r fig.height = 1.5 * 3.5, fig.width = 1.5 * 4.24725}
 plot_hh(bing, hanam)
 ```
+
+## Calculating distances
+
+You can calcultate distances between 2 points with the `sf::st_distance()`. For
+that, you need to install the `lwgeom` package:
+
+```{r}
+if (! "lwgeom" %in% rownames(installed.packages())) install.packages("lwgeom")
+```
+
+Once this is done, the calculation of the distance between the first 2 houses is
+done as so:
+
+```{r}
+sf::st_distance(hanam[1, ], hanam[2, ])
+```
+
