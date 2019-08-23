@@ -116,9 +116,15 @@ head(houses)
 We need the `OpenStreetMap` package:
 
 ```{r}
-if (! "sf" %in% rownames(installed.packages())) install.packages("OpenStreetMap")
+if (! "OpenStreetMap" %in% rownames(installed.packages())) install.packages("OpenStreetMap")
 library(OpenStreetMap)
 ```
+
+> Note: if you have recently installed a new version of java, you may need to
+type `R CMD javareconf` at the command line and restart a fresh R session. You
+may need to reinstall both the `rJava` and the `OpenStreetMap` packages too.
+Otherwise, you may also need to change the `$JAVA_HOME` variable in the
+`.Rprofile` file.
 
 Below is the code you'd need to download the tiles from 3 different types of maps:
 
@@ -225,7 +231,7 @@ Which gives:
 head(clusters)
 ```
 
-Then you can plot these cluster on the map with color code:
+Then you can plot these clusters on the map with color code:
 
 ```{r fig.height = 1.5 * 3.5, fig.width = 1.5 * 4.24725}
 plot(st_geometry(st_transform(hanam, osm$tiles[[1]]$projection)))
